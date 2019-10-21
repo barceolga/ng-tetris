@@ -35,10 +35,13 @@ export class Piece implements IPiece {
                     // this.x & this.y = position on the board
                     // x & y postition are the positions of the shape
                     this.ctx.fillRect(this.x + x, this.y + y, 1, 1);
-                    this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
                 }
             });
         });
     }
 
+    move(p: IPiece) {
+        this.x = p.x;
+        this.y = p.y;
+    }
 }
