@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { COLS, ROWS, BLOCK_SIZE } from './../constants';
+import  { Piece, IPiece } from './../../piece.component'
 import { GameService } from '../game.service'
 
 @Component({
@@ -17,6 +18,7 @@ export class BoardComponent implements OnInit {
   lines: number;
   level: number;
   board: number[][];
+  piece: Piece;
 
   constructor(
     private gameService: GameService
@@ -44,7 +46,9 @@ export class BoardComponent implements OnInit {
 
   play() {
     this.board = this.getEmptyBoard();
-    console.table(this.board);
+    this.piece = new Piece(this.ctx);
+    this.piece.draw();
+    //console.table(this.board);
   }
 
 
