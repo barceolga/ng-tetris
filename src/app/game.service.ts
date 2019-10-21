@@ -30,4 +30,15 @@ export class GameService {
     return y <= ROWS
   }
 
+  rotate(p: IPiece): IPiece {
+    let clone: IPiece = JSON.parse(JSON.stringify(p));
+    for (let y  = 0; y < p.shape.length; y++) {
+      for (let x = 0; x < y; x++) {
+        [p.shape[x][y], p.shape[y][x]] = [p.shape[y][x], p.shape[x][y]]
+      }
+    }
+    p.shape.forEach(row => row.reverse())
+    return clone;
+  }
+
 }
