@@ -1,5 +1,7 @@
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { COLS, ROWS, BLOCK_SIZE } from './../constants'
+import { Component, ViewChild, ElementRef, OnInit, HostListener } from '@angular/core';
+import { COLS, ROWS, BLOCK_SIZE, KEY } from './../constants';
+import  { Piece, IPiece } from './../../piece.component'
+import { GameService } from '../game.service'
 
 @Component({
   selector: 'game-board',
@@ -15,6 +17,45 @@ export class BoardComponent implements OnInit {
   points: number;
   lines: number;
   level: number;
+  board: number[][];
+  piece: Piece;
+  moves = {
+    [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1}),
+    [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1}),
+    [KEY.DOWN]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1}),
+    [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1}),
+    [KEY.UP]: (p: IPiece): IPiece => this.gameService.rotate(p)
+  };
+
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+      if (event.keyCode === KEY.ESC) {
+         alert('Game over!')
+        //this.gameOver()
+      } else if (this.moves[event.keyCode]) {
+        event.preventDefault();
+        // Get new state
+        let p = this.moves[event.keyCode](this.piece);
+        if (event.keyCode === KEY.SPACE) {
+          while (this.gameService.valid(p, this.board)) {
+            this.piece.move(p);
+            p = this.moves[KEY.DOWN](this.piece)
+          }
+        } else if (this.gameService.valid(p, this.board)) {
+          this.piece.move(p);
+        }
+        // Clear the old position before drawing
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        // Draw the new position
+        this.piece.draw();
+      }
+  }
+
+  constructor(
+    private gameService: GameService
+  ) {
+
+  }
 
   ngOnInit() {
     this.initBoard()
@@ -27,8 +68,21 @@ export class BoardComponent implements OnInit {
     // Calculate size of canvas from constants.
     this.ctx.canvas.width = COLS * BLOCK_SIZE;
     this.ctx.canvas.height = ROWS * BLOCK_SIZE;
+    this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
   }
 
-  play() {}
+  getEmptyBoard(): number[][] {
+    return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+
+  }
+
+  play() {
+    this.board = this.getEmptyBoard();
+    this.piece = new Piece(this.ctx);
+    this.piece.draw();
+    //console.table(this.board);
+  }
+
+
 
 }
