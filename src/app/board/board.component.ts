@@ -35,17 +35,18 @@ export class BoardComponent implements OnInit {
         event.preventDefault();
         console.log(event.keyCode)
         // Get new state
-        const p = this.moves[event.keyCode](this.piece);
+        let p = this.moves[event.keyCode](this.piece);
         // Move the piece
-        this.piece.move(p);
-        console.log(this.piece.move(p));
+        if (this.gameService.valid(p)) {
+          console.log(this.gameService.valid(p));
+          this.piece.move(p);
+        }
         // Clear the old position before drawing
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         // Draw the new position
         this.piece.draw();
       }
   }
-
 
   constructor(
     private gameService: GameService
