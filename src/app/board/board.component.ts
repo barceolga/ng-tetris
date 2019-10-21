@@ -22,7 +22,7 @@ export class BoardComponent implements OnInit {
   moves = {
     [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1}),
     [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1}),
-    [KEY.UP]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1}),
+    [KEY.DOWN]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1}),
     [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1})
   };
 
@@ -33,12 +33,14 @@ export class BoardComponent implements OnInit {
         //this.gameOver()
       } else if (this.moves[event.keyCode]) {
         event.preventDefault();
-        console.log(event.keyCode)
         // Get new state
         let p = this.moves[event.keyCode](this.piece);
-        // Move the piece
-        if (this.gameService.valid(p)) {
-          console.log(this.gameService.valid(p));
+        if (event.keyCode === KEY.SPACE) {
+          while (this.gameService.valid(p, this.board)) {
+            this.piece.move(p);
+            p = this.moves[KEY.DOWN](this.piece)
+          }
+        } else if (this.gameService.valid(p, this.board)) {
           this.piece.move(p);
         }
         // Clear the old position before drawing
