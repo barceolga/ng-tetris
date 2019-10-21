@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { COLS, ROWS, BLOCK_SIZE } from './../constants'
+import { COLS, ROWS, BLOCK_SIZE } from './../constants';
+import { GameService } from '../game.service'
 
 @Component({
   selector: 'game-board',
@@ -15,6 +16,13 @@ export class BoardComponent implements OnInit {
   points: number;
   lines: number;
   level: number;
+  board: number[][];
+
+  constructor(
+    private gameService: GameService
+  ) {
+
+  }
 
   ngOnInit() {
     this.initBoard()
@@ -29,6 +37,16 @@ export class BoardComponent implements OnInit {
     this.ctx.canvas.height = ROWS * BLOCK_SIZE;
   }
 
-  play() {}
+  getEmptyBoard(): number[][] {
+    return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+
+  }
+
+  play() {
+    this.board = this.getEmptyBoard();
+    console.table(this.board);
+  }
+
+
 
 }
