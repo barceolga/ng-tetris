@@ -5,7 +5,7 @@ import { COLS, ROWS } from  './constants'
   providedIn: 'root'
 })
 export class GameService {
-  valid(p: IPiece):boolean {
+  valid(p: IPiece, board: number[][]):boolean {
     return p.shape.every((row, dy) => {
       return row.every((value, dx) => {
         let x = p.x + dx;
