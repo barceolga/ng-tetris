@@ -22,7 +22,7 @@ export class Piece implements IPiece {
         const typeId = this.randomizeTetromino(COLORS.length - 1);
         this.shape = SHAPES[typeId];
         this.color = COLORS[typeId];
-        this.x = 3;
+        this.x = typeId === 4 ? 4 : 3;
         this.y = 0;
     }
 
@@ -31,8 +31,6 @@ export class Piece implements IPiece {
         this.shape.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value > 0) {
-                    // this.x & this.y = position on the board
-                    // x & y postition are the positions of the shape
                     this.ctx.fillRect(this.x + x, this.y + y, 1, 1);
                 }
             });
@@ -42,6 +40,7 @@ export class Piece implements IPiece {
     move(p: IPiece) {
         this.x = p.x;
         this.y = p.y;
+        this.shape = p.shape;
     }
 
     randomizeTetromino(noOfTypes: number): number {
