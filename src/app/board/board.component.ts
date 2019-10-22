@@ -140,9 +140,10 @@ export class BoardComponent implements OnInit {
     this.board = this.getEmptyBoard();
     this.piece = new Piece(this.ctx);
     this.time.start = performance.now();
-    console.log(this.time.start);
+    //console.log(this.time.start);
+    // TODO: make animate work as intended, for now, loop is not happening
     this.animate();
-    console.log(this.board.length)
+    //console.log(this.board.length)
     //console.table(this.board);
   }
 
