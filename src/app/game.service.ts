@@ -6,20 +6,21 @@ import { COLS, ROWS } from  './constants'
 })
 export class GameService {
   valid(p: IPiece, board: number[][]):boolean {
+0;
     return p.shape.every((row, dy) => {
       return row.every((value, dx) => {
         let x = p.x + dx;
         let y = p.y + dy;
         return (
           this.isEmpty(value) || 
-          (this.insideWalls(x) && this.aboveFloor(y))
+          (this.insideWalls(x) && this.aboveFloor(y) && this.notOccupied(board, x, y))
         );
       });
     });
   }
 
   isEmpty(value: number):boolean {
-   return value === 0
+   return value === 0;
   }
 
   insideWalls(x: number): boolean {
@@ -27,18 +28,22 @@ export class GameService {
   }
 
   aboveFloor(y: number): boolean {
-    return y <= ROWS
+    return y <= ROWS;
   }
 
-  rotate(p: IPiece): IPiece {
-    let clone: IPiece = JSON.parse(JSON.stringify(p));
+  notOccupied(board: number[][], x: number, y: number) : boolean {
+    return board[y] && board[y][x] === 0;
+  }
+
+  rotate(piece: IPiece): IPiece {
+    let p: IPiece = JSON.parse(JSON.stringify(piece));
     for (let y  = 0; y < p.shape.length; y++) {
       for (let x = 0; x < y; x++) {
         [p.shape[x][y], p.shape[y][x]] = [p.shape[y][x], p.shape[x][y]]
       }
     }
     p.shape.forEach(row => row.reverse())
-    return clone;
+    return p;
   }
 
 }
