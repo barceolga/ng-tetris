@@ -1,4 +1,4 @@
-import { BLOCK_SIZE } from './app/constants'
+import { BLOCK_SIZE, COLORS, SHAPES } from './app/constants'
 
 export interface IPiece {
     x: number;
@@ -19,12 +19,11 @@ export class Piece implements IPiece {
     }
 
     spawn() {
-        this.color = 'blue';
-        this.shape = [[2, 0, 0], [2, 2, 2], [0, 0, 0]];
-
-        // Position where the shape spawns.
-        this.x = 3;
-        this.y = 0
+        const typeId = this.randomizeTetromino(COLORS.length - 1);
+        this.shape = SHAPES[typeId];
+        this.color = COLORS[typeId];
+        this.x = typeId === 4 ? 4 : 3;
+        this.y = 0;
     }
 
     draw() {
@@ -32,8 +31,6 @@ export class Piece implements IPiece {
         this.shape.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value > 0) {
-                    // this.x & this.y = position on the board
-                    // x & y postition are the positions of the shape
                     this.ctx.fillRect(this.x + x, this.y + y, 1, 1);
                 }
             });
@@ -43,5 +40,10 @@ export class Piece implements IPiece {
     move(p: IPiece) {
         this.x = p.x;
         this.y = p.y;
+        this.shape = p.shape;
+    }
+
+    randomizeTetromino(noOfTypes: number): number {
+        return Math.floor(Math.random() * noOfTypes);
     }
 }
