@@ -19,7 +19,7 @@ export class BoardComponent implements OnInit {
   level: number;
   board: number[][];
   piece: Piece;
-  time = {start: 0, elapsed: 0, level: 1000};
+  time = { start: 0, elapsed: 0, level: 1000 };
   moves = {
     [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1}),
     [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1}),
@@ -45,10 +45,6 @@ export class BoardComponent implements OnInit {
         } else if (this.gameService.valid(p, this.board)) {
           this.piece.move(p);
         }
-        // Clear the old position before drawing
-        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        // Draw the new position
-        this.piece.draw();
       }
   }
 
@@ -59,7 +55,7 @@ export class BoardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.initBoard()
+    this.initBoard();
   }
 
   initBoard() {
@@ -74,12 +70,12 @@ export class BoardComponent implements OnInit {
 
   getEmptyBoard(): number[][] {
     return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
-
   }
 
   animate(now = 0) {
     // Update elapsed time.
     this.time.elapsed = now - this.time.start;
+    //console.log(this.time.elapsed)
     // If elapsed time has passed time for current level
     if (this.time.elapsed > this.time.level) {
       // Reset start time
@@ -93,7 +89,7 @@ export class BoardComponent implements OnInit {
   draw() {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.piece.draw();
-    this.drawBoard()
+    this.drawBoard();
   }
 
   drawBoard(){
@@ -103,8 +99,8 @@ export class BoardComponent implements OnInit {
           this.ctx.fillStyle = COLORS[value];
           this.ctx.fillRect(x, y, 1, 1);
         }
-      })
-    })
+      });
+    });
   }
 
   drop(): boolean {
@@ -112,15 +108,41 @@ export class BoardComponent implements OnInit {
     if (this.gameService.valid(p, this.board)){
       this.piece.move(p);
     } else {
+      this.freeze();
+      this.clearLines();
 
     }
     return true;
   }
 
+  freeze(){
+    this.piece.shape.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (value > 0) {
+          this.board[y + this.piece.y][x + this.piece.x] = value;
+        }
+      });
+    });
+  }
+
+  clearLines() {
+    this.board.forEach((row, y) => {
+      //If every value is greater then 0.
+      if (row.every(value => value > 0)){
+        // Remove the row.
+        this.board.splice(y, 1);
+        // Add zero filled at the top.
+        this.board.unshift(Array(COLS).fill(0));
+      }
+    });
+  }
   play() {
     this.board = this.getEmptyBoard();
     this.piece = new Piece(this.ctx);
-    this.animate()
+    this.time.start = performance.now();
+    console.log(this.time.start);
+    this.animate();
+    console.log(this.board.length)
     //console.table(this.board);
   }
 
