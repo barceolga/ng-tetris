@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit, HostListener } from '@angular/core';
-import { COLS, ROWS, BLOCK_SIZE, KEY } from './../constants';
+import { COLS, ROWS, BLOCK_SIZE, KEY, COLORS } from './../constants';
 import  { Piece, IPiece } from './../../piece.component'
 import { GameService } from '../game.service'
 
@@ -19,6 +19,7 @@ export class BoardComponent implements OnInit {
   level: number;
   board: number[][];
   piece: Piece;
+  time = {start: 0, elapsed: 0, level: 1000};
   moves = {
     [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1}),
     [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1}),
@@ -39,7 +40,7 @@ export class BoardComponent implements OnInit {
         if (event.keyCode === KEY.SPACE) {
           while (this.gameService.valid(p, this.board)) {
             this.piece.move(p);
-            p = this.moves[KEY.DOWN](this.piece)
+            p = this.moves[KEY.DOWN](this.piece);
           }
         } else if (this.gameService.valid(p, this.board)) {
           this.piece.move(p);
@@ -76,10 +77,50 @@ export class BoardComponent implements OnInit {
 
   }
 
+  animate(now = 0) {
+    // Update elapsed time.
+    this.time.elapsed = now - this.time.start;
+    // If elapsed time has passed time for current level
+    if (this.time.elapsed > this.time.level) {
+      // Reset start time
+      this.time.start = now;
+      this.drop();
+    }
+    this.draw();
+    requestAnimationFrame(this.animate.bind(this));
+  }
+
+  draw() {
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.piece.draw();
+    this.drawBoard()
+  }
+
+  drawBoard(){
+    this.board.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (value > 0){
+          this.ctx.fillStyle = COLORS[value];
+          this.ctx.fillRect(x, y, 1, 1);
+        }
+      })
+    })
+  }
+
+  drop(): boolean {
+    let p = this.moves[KEY.DOWN](this.piece);
+    if (this.gameService.valid(p, this.board)){
+      this.piece.move(p);
+    } else {
+
+    }
+    return true;
+  }
+
   play() {
     this.board = this.getEmptyBoard();
     this.piece = new Piece(this.ctx);
-    this.piece.draw();
+    this.animate()
     //console.table(this.board);
   }
 
