@@ -3,6 +3,7 @@ export const ROWS = 20;
 export const BLOCK_SIZE = 30;
 export const LINES_PER_LEVEL = 10;
 export const COLORS = [
+    'none',
     'cyan',
     'blue',
     'orange',
