@@ -95,13 +95,13 @@ export class BoardComponent implements OnInit {
     //console.log(this.time.elapsed)
     // If elapsed time has passed time for current level
     if (this.time.elapsed > this.time.level) {
+
       // Reset start time
       this.time.start = now;
       if (!this.drop()){
         this.gameOver();
         return;
       }
-      this.drop();
     }
     this.draw();
     this.requestId = requestAnimationFrame(this.animate.bind(this));
@@ -172,7 +172,7 @@ export class BoardComponent implements OnInit {
       if (this.lines >= LINES_PER_LEVEL) {
         this.level++;
         this.lines -= LINES_PER_LEVEL;
-        this.time.level = LEVEL[this.level]
+        this.time.level = LEVEL[this.level];
       }
     }
   }
@@ -187,12 +187,14 @@ export class BoardComponent implements OnInit {
   }
   play() {
     this.resetGame();
+    this.next = new Piece(this.ctx);
     this.piece = new Piece(this.ctx);
-    this.next = new Piece(this.ctx)
     this.next.drawNext(this.ctxNext);
     this.time.start = performance.now();
     //console.log(this.time.start);
-    // TODO: make animate work as intended, for now, loop is not happening
+    if (this.requestId) {
+      cancelAnimationFrame(this.requestId)
+    }
     this.animate();
     //console.log(this.board.length)
     //console.table(this.board);
