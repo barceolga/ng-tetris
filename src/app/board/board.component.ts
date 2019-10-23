@@ -23,7 +23,7 @@ export class BoardComponent implements OnInit {
   board: number[][];
   piece: Piece;
   next: Piece;
-  time = { start: 0, elapsed: 0, level: 1000 };
+  time: { start: number; elapsed: number; level: number };
   requestId: number;
   moves = {
     [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1}),
@@ -167,7 +167,7 @@ export class BoardComponent implements OnInit {
     });
     if (lines > 0) {
       //Add points if we cleared some lines.
-      this.points = this.gameService.getLinesClearedPoints(lines, this.level);
+      this.points += this.gameService.getLinesClearedPoints(lines, this.level);
       this.lines += lines;
       if (this.lines >= LINES_PER_LEVEL) {
         this.level++;
