@@ -19,6 +19,7 @@ export class Piece implements IPiece {
     }
 
     spawn() {
+        //Figure out what makes the animation stops sometimes. Suspect that it has to do with typeId value
         const typeId = this.randomizeTetromino(COLORS.length - 1);
         this.shape = SHAPES[typeId];
         this.color = COLORS[typeId];
@@ -56,6 +57,7 @@ export class Piece implements IPiece {
     }
 
     randomizeTetromino(noOfTypes: number): number {
+        //console.log(Math.floor(Math.random() * noOfTypes));
         return Math.floor(Math.random() * noOfTypes);
     }
 }
