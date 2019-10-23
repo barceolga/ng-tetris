@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit, HostListener } from '@angular/core';
-import { COLS, ROWS, BLOCK_SIZE, KEY, COLORS, POINTS, LEVEL } from './../constants';
+import { COLS, ROWS, BLOCK_SIZE, KEY, COLORS, POINTS, LEVEL, LINES_PER_LEVEL } from './../constants';
 import  { Piece, IPiece } from './../../piece.component'
 import { GameService } from '../game.service'
 
@@ -17,7 +17,7 @@ export class BoardComponent implements OnInit {
 
   ctx: CanvasRenderingContext2D;
   ctxNext: CanvasRenderingContext2D;
-  points: number = 0;
+  points: number;
   lines: number;
   level: number;
   board: number[][];
@@ -36,8 +36,7 @@ export class BoardComponent implements OnInit {
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
       if (event.keyCode === KEY.ESC) {
-         alert('Game over!')
-        //this.gameOver()
+        this.gameOver();
       } else if (this.moves[event.keyCode]) {
         event.preventDefault();
         // Get new state
@@ -98,6 +97,10 @@ export class BoardComponent implements OnInit {
     if (this.time.elapsed > this.time.level) {
       // Reset start time
       this.time.start = now;
+      if (!this.drop()){
+        this.gameOver();
+        return;
+      }
       this.drop();
     }
     this.draw();
@@ -128,6 +131,10 @@ export class BoardComponent implements OnInit {
     } else {
       this.freeze();
       this.clearLines();
+      if (this.piece.y === 0) {
+        //Game over
+        return false;
+      }
       this.piece = this.next;
       this.next = new Piece(this.ctx);
       this.next.drawNext(this.ctxNext);
@@ -160,11 +167,26 @@ export class BoardComponent implements OnInit {
     });
     if (lines > 0) {
       //Add points if we cleared some lines.
-      this.points = this.gameService.getLinesClearedPoints(lines);
+      this.points = this.gameService.getLinesClearedPoints(lines, this.level);
+      this.lines += lines;
+      if (this.lines >= LINES_PER_LEVEL) {
+        this.level++;
+        this.lines -= LINES_PER_LEVEL;
+        this.time.level = LEVEL[this.level]
+      }
     }
   }
+
+  gameOver() {
+    cancelAnimationFrame(this.requestId);
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillRect(1, 3, 8, 1.2);
+    this.ctx.font = '1px Arial';
+    this.ctx.fillStyle = 'red';
+    this.ctx.fillText('GAME OVER', 1.8, 4)
+  }
   play() {
-    this.board = this.getEmptyBoard();
+    this.resetGame();
     this.piece = new Piece(this.ctx);
     this.next = new Piece(this.ctx)
     this.next.drawNext(this.ctxNext);
@@ -176,6 +198,13 @@ export class BoardComponent implements OnInit {
     //console.table(this.board);
   }
 
+  resetGame() {
+    this.points = 0;
+    this.lines = 0;
+    this.level = 0;
+    this.board = this.getEmptyBoard();
+    this.time = { start: 0, elapsed: 0, level: LEVEL[this.level] };
+  }
 
 
 }
