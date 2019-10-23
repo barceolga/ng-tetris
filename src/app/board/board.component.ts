@@ -12,14 +12,19 @@ export class BoardComponent implements OnInit {
   //Get reference to the canvas.
   @ViewChild('board', { static: true })
   canvas: ElementRef<HTMLCanvasElement>;
+  @ViewChild('next', { static: true })
+  canvasNext: ElementRef<HTMLCanvasElement>
 
   ctx: CanvasRenderingContext2D;
+  ctxNext: CanvasRenderingContext2D;
   points: number;
   lines: number;
   level: number;
   board: number[][];
   piece: Piece;
+  next: Piece;
   time = { start: 0, elapsed: 0, level: 1000 };
+  requestId : number;
   moves = {
     [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1}),
     [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1}),
@@ -56,6 +61,7 @@ export class BoardComponent implements OnInit {
 
   ngOnInit() {
     this.initBoard();
+    this.initNext();
   }
 
   initBoard() {
@@ -66,6 +72,13 @@ export class BoardComponent implements OnInit {
     this.ctx.canvas.width = COLS * BLOCK_SIZE;
     this.ctx.canvas.height = ROWS * BLOCK_SIZE;
     this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
+  }
+
+  initNext() {
+    this.ctxNext = this.canvasNext.nativeElement.getContext('2d');
+    this.ctxNext.canvas.width = 4 * BLOCK_SIZE;
+    this.ctxNext.canvas.height = 4 * BLOCK_SIZE;
+    this.ctxNext.scale(BLOCK_SIZE, BLOCK_SIZE);
   }
 
   getEmptyBoard(): number[][] {
@@ -83,7 +96,7 @@ export class BoardComponent implements OnInit {
       this.drop();
     }
     this.draw();
-    requestAnimationFrame(this.animate.bind(this));
+    this.requestId = requestAnimationFrame(this.animate.bind(this));
   }
 
   draw() {
@@ -110,7 +123,9 @@ export class BoardComponent implements OnInit {
     } else {
       this.freeze();
       this.clearLines();
-
+      this.piece = this.next;
+      this.next = new Piece(this.ctx);
+      this.next.drawNext(this.ctxNext);
     }
     return true;
   }
@@ -139,6 +154,8 @@ export class BoardComponent implements OnInit {
   play() {
     this.board = this.getEmptyBoard();
     this.piece = new Piece(this.ctx);
+    this.next = new Piece(this.ctx)
+    this.next.drawNext(this.ctxNext);
     this.time.start = performance.now();
     //console.log(this.time.start);
     // TODO: make animate work as intended, for now, loop is not happening
