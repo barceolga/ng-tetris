@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit, HostListener } from '@angular/core';
-import { COLS, ROWS, BLOCK_SIZE, KEY, COLORS } from './../constants';
+import { COLS, ROWS, BLOCK_SIZE, KEY, COLORS, POINTS } from './../constants';
 import  { Piece, IPiece } from './../../piece.component'
 import { GameService } from '../game.service'
 
@@ -17,14 +17,14 @@ export class BoardComponent implements OnInit {
 
   ctx: CanvasRenderingContext2D;
   ctxNext: CanvasRenderingContext2D;
-  points: number;
+  points: number = 0;
   lines: number;
   level: number;
   board: number[][];
   piece: Piece;
   next: Piece;
   time = { start: 0, elapsed: 0, level: 1000 };
-  requestId : number;
+  requestId: number;
   moves = {
     [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1}),
     [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1}),
@@ -44,11 +44,16 @@ export class BoardComponent implements OnInit {
         let p = this.moves[event.keyCode](this.piece);
         if (event.keyCode === KEY.SPACE) {
           while (this.gameService.valid(p, this.board)) {
+            this.points += POINTS.HARD_DROP;
+            //console.log(this.points);
             this.piece.move(p);
             p = this.moves[KEY.DOWN](this.piece);
           }
         } else if (this.gameService.valid(p, this.board)) {
           this.piece.move(p);
+          if (event.keyCode === KEY.DOWN) {
+            this.points += POINTS.SOFT_DROP;
+          }
         }
       }
   }
@@ -141,15 +146,22 @@ export class BoardComponent implements OnInit {
   }
 
   clearLines() {
+    let lines = 0;
     this.board.forEach((row, y) => {
       //If every value is greater then 0.
       if (row.every(value => value > 0)){
+        // Increase for cleared line.
+        lines++;
         // Remove the row.
         this.board.splice(y, 1);
         // Add zero filled at the top.
         this.board.unshift(Array(COLS).fill(0));
       }
     });
+    if (lines > 0) {
+      //Add points if we cleared some lines.
+      this.points = this.gameService.getLinesClearedPoints(lines);
+    }
   }
   play() {
     this.board = this.getEmptyBoard();
