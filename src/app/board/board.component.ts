@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit, HostListener } from '@angular/core';
-import { COLS, ROWS, BLOCK_SIZE, KEY, COLORS, POINTS } from './../constants';
+import { COLS, ROWS, BLOCK_SIZE, KEY, COLORS, POINTS, LEVEL } from './../constants';
 import  { Piece, IPiece } from './../../piece.component'
 import { GameService } from '../game.service'
 
