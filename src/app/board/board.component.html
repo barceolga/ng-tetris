@@ -11,11 +11,11 @@
         <button (click)="play()" class="play-button">Play</button>
     </div>
     <div >
-        <p>Higer score: {{ scores[0] }}</p>
+        <p>Higest score: <span>{{ scores[0] }}</span></p>
             <p>Table of scores:</p>
             <ul>
                 <li *ngFor="let score of scores">
-                    <p>Score: {{ score }}</p>
+                    <p>Score: <span>{{ score }}</span></p>
                 </li>
             </ul>
     </div>

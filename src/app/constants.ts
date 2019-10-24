@@ -4,13 +4,13 @@ export const BLOCK_SIZE = 30;
 export const LINES_PER_LEVEL = 10;
 export const COLORS = [
     //'none',
-    'cyan',
-    'blue',
-    'orange',
-    'yellow',
-    'green',
-    'purple',
-    'red'
+    'aqua',
+    'navy',
+    'OrangeRed',
+    'Gold',
+    'lime',
+    'LightPink',
+    'Crimson'
 ]
   
 export const SHAPES = [
