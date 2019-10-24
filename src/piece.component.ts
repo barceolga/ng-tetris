@@ -19,8 +19,8 @@ export class Piece implements IPiece {
     }
 
     spawn() {
-        //Figure out what makes the animation stops sometimes. Suspect that it has to do with typeId value
-        const typeId = this.randomizeTetromino(COLORS.length - 1);
+        const typeId = this.randomizeTetromino(COLORS.length);
+        //console.log(typeId, COLORS.length);
         this.shape = SHAPES[typeId];
         this.color = COLORS[typeId];
         this.x = typeId === 4 ? 4 : 3;

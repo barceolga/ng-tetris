@@ -21,6 +21,7 @@ export class BoardComponent implements OnInit {
   lines: number;
   level: number;
   board: number[][];
+  scores: number[] = [];
   piece: Piece;
   next: Piece;
   time: { start: number; elapsed: number; level: number };
@@ -185,6 +186,7 @@ export class BoardComponent implements OnInit {
     this.ctx.fillStyle = 'red';
     this.ctx.fillText('GAME OVER', 1.8, 4)
   }
+
   play() {
     this.resetGame();
     this.next = new Piece(this.ctx);
@@ -199,8 +201,13 @@ export class BoardComponent implements OnInit {
     //console.log(this.board.length)
     //console.table(this.board);
   }
+  
 
   resetGame() {
+    if (this.points > 0) {
+      this.scores.push(this.points);
+    }
+    this.scores = this.scores.sort((a,b) => b - a);
     this.points = 0;
     this.lines = 0;
     this.level = 0;

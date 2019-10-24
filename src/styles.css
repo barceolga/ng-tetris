@@ -24,3 +24,18 @@
     padding: 15px 30px;
     cursor: pointer;
   }
+  p span {
+    color: crimson
+  }
+
+  ul {
+    list-style-type: none;
+  }
+  li {
+    background-color:   lightgrey;
+    color: rgb(22, 22, 144);
+    border: 2.5px solid rgb(124, 6, 45);
+  }
+  li p {
+    padding-left: 10px
+  }

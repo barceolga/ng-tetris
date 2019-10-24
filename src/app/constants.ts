@@ -3,18 +3,18 @@ export const ROWS = 20;
 export const BLOCK_SIZE = 30;
 export const LINES_PER_LEVEL = 10;
 export const COLORS = [
-    'none',
-    'cyan',
-    'blue',
-    'orange',
-    'yellow',
-    'green',
-    'purple',
-    'red'
+    //'none',
+    'aqua',
+    'navy',
+    'OrangeRed',
+    'Gold',
+    'lime',
+    'LightPink',
+    'Crimson'
 ]
   
 export const SHAPES = [
- [],
+ //[],
   [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
   [[2, 0, 0], [2, 2, 2], [0, 0, 0]],
   [[0, 0, 3], [3, 3, 3], [0, 0, 0]],
